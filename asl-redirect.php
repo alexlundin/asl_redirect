@@ -2,7 +2,7 @@
 /**
  * Plugin Name: All Pages Redirect by Alex Lundin
  * Author:      Alex Lundin
- * Version:     1.0
+ * Version:     1.0.1
  * Description: All Pages Redirect by Alex Lundin
  * License:     GPL2
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -54,13 +54,13 @@ function asl_redirect_init() {
 		'reading'
 	);
 
-//	add_settings_field(
-//		'asl_settings_checkbox_name',
-//		'Включить редирект?',
-//		'asl_settings_callback_check',
-//		'reading',
-//		'asl_setting_sections'
-//	);
+	add_settings_field(
+		'asl_settings_checkbox_name',
+		'Включить редирект?',
+		'asl_settings_callback_check',
+		'reading',
+		'asl_setting_sections'
+	);
 
 	add_settings_field(
 		'asl_setting_name2',
@@ -103,9 +103,6 @@ function asl_redirect_meta_boxes() {
 add_action( 'admin_menu', 'asl_redirect_meta_boxes' );
 
 
-/*
- * Этап 2. Заполнение
- */
 function asl_redir_box( $post ) {
 	wp_nonce_field( basename( __FILE__ ), 'asl_redirect_metabox_nonce' );
 	$html = '<label><input type="checkbox" name="noindex"';
@@ -115,9 +112,7 @@ function asl_redir_box( $post ) {
 	echo $html;
 }
 
-/*
- * Этап 3. Сохранение
- */
+
 function asl_redirect_save_box_data( $post_id ) {
 	// проверяем, пришёл ли запрос со страницы с метабоксом
 	if ( ! isset( $_POST['asl_redirect_metabox_nonce'] )
@@ -166,54 +161,23 @@ add_action( 'template_redirect', function () {
 			exit();
 		}
 	}
+	if ( get_option( 'asl_settings_checkbox_name' ) == 1 ) {
+
+	}
 } );
 
-$val = array();
 
-$posts = get_posts( array(
-	'numberposts'      => - 1,
-	'meta_key'         => 'asl_redirect',
-	'post_type'        => [ 'post', 'page' ],
-	'suppress_filters' => true, // подавление работы фильтров изменения SQL запроса
-) );
+add_action( 'template_redirect', function () {
 
-foreach ( $posts as $post ) {
-	setup_postdata( $post );
-	if ( get_option( 'page_on_front' ) != $post->ID ) {
+	if ( get_post_meta( $post_id, 'asl_redirect', true ) == 1 ) {
+		$new = get_option( 'asl_setting_name2' ) . '/' . get_post( $post_id )->post_name;
+		$new = str_replace( "//", "/", $new );
 
-		$val[$post->ID] = get_post_meta( $post->ID, 'asl_redirect', true );
-//		if ( get_option( 'asl_settings_checkbox_name' ) == 1 && ( get_option( 'page_on_front' ) != $post->ID ) ) {
-//			global $wpdb;
-//			$wpdb->update( $wpdb->postmeta, [ 'meta_value' => 1 ], [ 'meta_key' => 'asl_redirect' ], '%d' );
-//
-//		} elseif ( get_option( 'asl_settings_checkbox_name' ) == null ) {
-//			global $wpdb;
-//			$wpdb->update( $wpdb->postmeta, [ 'meta_value' => null ], [ 'meta_key' => 'asl_redirect' ], '%d' );
-//
-//		} else
-
-		if ( get_post_meta( $post->ID, 'asl_redirect', true ) == 1 ) {
-
-//			global $wpdb;
-//			$wpdb->update( $wpdb->options, [ 'option_value' => 1 ], [ 'option_name' => 'asl_settings_checkbox_name' ], '%d' );
-		} elseif ( get_post_meta( $post->ID, 'asl_redirect', true ) == null ) {
-
-//			global $wpdb;
-//			$wpdb->update( $wpdb->postmeta, [ 'meta_value' => null ], [ 'meta_key' => 'asl_redirect' ], '%d' );
+		if ( is_page( $post_id ) ) {
+			wp_redirect( $new, 301 );
+			exit();
 		}
 	}
-
-
-}
-
-if ( get_option( 'page_on_front' ) == $post->ID ) {
-	unset( $val[ $post->ID ] );
-}
-
-if (in_array(null, $val, true)) {
-	$wpdb->update( $wpdb->options, [ 'option_value' => null ], [ 'option_name' => 'asl_settings_checkbox_name' ], '%d' );
-} else {
-	$wpdb->update( $wpdb->options, [ 'option_value' => 1 ], [ 'option_name' => 'asl_settings_checkbox_name' ], '%d' );
-}
+} );
 
 wp_reset_postdata(); // сброс
