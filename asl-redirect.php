@@ -2,7 +2,7 @@
 /**
  * Plugin Name: All Pages Redirect by Alex Lundin
  * Author:      Alex Lundin
- * Version:     0.1
+ * Version:     1.0
  * Description: All Pages Redirect by Alex Lundin
  * License:     GPL2
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
