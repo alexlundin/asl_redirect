@@ -2,7 +2,7 @@
 /**
  * Plugin Name: All Pages Redirect by Alex Lundin
  * Author:      Alex Lundin
- * Version:     1.0.11
+ * Version:     1.0.12
  * Description: All Pages Redirect by Alex Lundin
  * License:     GPL2
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -148,8 +148,10 @@ if ( get_option( 'asl_settings_checkbox_name' ) == 1 ) {
 			$new = get_option( 'asl_setting_name2' ) . '/' . get_post( $post_id )->post_name;
 			$new = str_replace( "//", "/", $new );
 
-			wp_redirect( $new, 301 );
-			exit;
+			header("Location: ". $new );
+
+//			wp_redirect( $new, 301 );
+//			exit;
 		}
 	} );
 }
