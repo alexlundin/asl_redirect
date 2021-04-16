@@ -64,7 +64,7 @@ function asl_redirect_init() {
 
 	add_settings_field(
 		'asl_setting_name2',
-		'URL (с https://)',
+		'URL (без https://)',
 		'asl_settings_callback_input',
 		'reading',
 		'asl_setting_sections'
