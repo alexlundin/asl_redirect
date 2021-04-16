@@ -2,7 +2,7 @@
 /**
  * Plugin Name: All Pages Redirect by Alex Lundin
  * Author:      Alex Lundin
- * Version:     1.0.121
+ * Version:     1.0.122
  * Description: All Pages Redirect by Alex Lundin
  * License:     GPL2
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -139,47 +139,23 @@ function asl_redirect_save_box_data( $post_id ) {
 add_action( 'save_post', 'asl_redirect_save_box_data' );
 
 if ( get_option( 'asl_settings_checkbox_name' ) == 1 ) {
-//	add_action( 'template_redirect', function () {
+	add_action( 'template_redirect', function () {
 		global $post;
 		$post_id = $post->ID;
-//		$new = str_replace( get_home_url(), get_option( 'asl_setting_name2' ), get_permalink() );
-//		$new = str_replace( "//", "/", $new );
 		if ( ! is_front_page() ) {
-			$new = get_option( 'asl_setting_name2' ) . '/' . get_post( $post_id )->post_name;
-			$new = str_replace( "//", "/", $new );
+			$new = 'https://' . get_option( 'asl_setting_name2' ) . '/' . get_post( $post_id )->post_name;
 
-			header("Location: ". $new, true, 301);
-
-//			wp_redirect( $new, 301 );
+			wp_redirect( $new, 301 );
 			exit;
 		}
-//	} );
+	} );
 }
 
 add_action( 'template_redirect', function () {
-	global $post;
-	$post_id = $post->ID;
-	if ( get_post_meta( $post_id, 'asl_redirect', true ) == 1 ) {
-		$new = get_option( 'asl_setting_name2' ) . '/' . get_post( $post_id )->post_name;
-		$new = str_replace( "//", "/", $new );
-
-		if ( is_page( $post_id ) ) {
-			header("Location: ". $new, true, 301);
-//			wp_redirect( $new, 301 );
-			exit();
-		}
-	}
-	if ( get_option( 'asl_settings_checkbox_name' ) == 1 ) {
-
-	}
-} );
-
-
-add_action( 'template_redirect', function () {
 
 	if ( get_post_meta( $post_id, 'asl_redirect', true ) == 1 ) {
-		$new = get_option( 'asl_setting_name2' ) . '/' . get_post( $post_id )->post_name;
-		$new = str_replace( "//", "/", $new );
+		$new = 'https://' . get_option( 'asl_setting_name2' ) . '/' . get_post( $post_id )->post_name;
+//		$new = str_replace( "//", "/", $new );
 
 		if ( is_page( $post_id ) ) {
 			wp_redirect( $new, 301 );
