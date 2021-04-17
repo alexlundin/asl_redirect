@@ -2,7 +2,7 @@
 /**
  * Plugin Name: All Pages Redirect by Alex Lundin
  * Author:      Alex Lundin
- * Version:     1.2.11
+ * Version:     1.2.12
  * Description: All Pages Redirect by Alex Lundin
  * License:     GPL2
  * Text Domain: asl-redirect
@@ -10,8 +10,8 @@
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  */
 
-add_action( 'plugins_loaded', function(){
-	load_plugin_textdomain( 'asl-redirect', false, dirname( plugin_basename(__FILE__) ) . '/lang' );
+add_action( 'plugins_loaded', function () {
+	load_plugin_textdomain( 'asl-redirect', false, dirname( plugin_basename( __FILE__ ) ) . '/lang' );
 } );
 
 require 'plugin-update-checker-4.11/plugin-update-checker.php';
@@ -53,7 +53,7 @@ function asl_redirect_deactivate() {
  * Создание метабокса
  */
 function asl_redirect_meta_boxes() {
-	add_meta_box( 'asl_redirect_box', __('Настройки редиректа', 'asl-redirect'), 'asl_redir_box', array(
+	add_meta_box( 'asl_redirect_box', __( 'Настройки редиректа', 'asl-redirect' ), 'asl_redir_box', array(
 		'post',
 		'page'
 	), 'side', 'high' );
@@ -68,8 +68,8 @@ function asl_redir_box( $post ) {
 	$html .= 'value="1"';
 	$html .= ( get_post_meta( $post->ID, 'asl_redirect', true ) == '1' ) ? ' checked="checked"' : '';
 	$html .= ' />';
-	$html .= __('Включить редирект страницы?', 'asl-redirect');
-    $html .= '</label>';
+	$html .= __( 'Включить редирект страницы?', 'asl-redirect' );
+	$html .= '</label>';
 	echo $html;
 }
 
@@ -201,12 +201,12 @@ $all_options   = get_option( 'asl_redirect_options' );
 $radio_options = $all_options['asl_redirect_radio'];
 
 $address = $all_options['asl_redirect_uri'];
-$address = (strpos( $address, 'https://' ) || strpos( $address, 'http://' )) ?  $address : 'https://' . $address;
-
+$address = ( gettype( strpos( $address, 'https://' ) ) == "integer" || gettype( strpos( $address, 'http://' ) ) == "integer" ) ? $address : 'https://' . $address;
 
 switch ( $radio_options ) {
 	case( 'all' ):
 		add_action( 'template_redirect', function () use ( $post, $address ) {
+
 			$paginate_address = substr( $address, - 1 ) === '/' ? $address . get_post( $post->ID )->post_name : $address . '/' . get_post( $post->ID )->post_name;
 			if ( ! is_front_page() ) {
 				wp_redirect( $paginate_address, 301 );
