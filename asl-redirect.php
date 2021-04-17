@@ -2,7 +2,7 @@
 /**
  * Plugin Name: All Pages Redirect by Alex Lundin
  * Author:      Alex Lundin
- * Version:     1.2.12
+ * Version:     1.2.13
  * Description: All Pages Redirect by Alex Lundin
  * License:     GPL2
  * Text Domain: asl-redirect
@@ -210,7 +210,9 @@ switch ( $radio_options ) {
 			$paginate_address = substr( $address, - 1 ) === '/' ? $address . get_post( $post->ID )->post_name : $address . '/' . get_post( $post->ID )->post_name;
 			if ( ! is_front_page() ) {
 				wp_redirect( $paginate_address, 301 );
-			} else {
+			}
+
+			if (is_front_page() || is_home()){
 				wp_redirect( $address, 301 );
 			}
 			exit;
