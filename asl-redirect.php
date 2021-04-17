@@ -2,7 +2,7 @@
 /**
  * Plugin Name: All Pages Redirect by Alex Lundin
  * Author:      Alex Lundin
- * Version:     1.1
+ * Version:     1.2.1
  * Description: All Pages Redirect by Alex Lundin
  * License:     GPL2
  * Text Domain: asl-redirect
