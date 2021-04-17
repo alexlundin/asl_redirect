@@ -1,0 +1,96 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: asl-redirect\n"
+"POT-Creation-Date: 2021-04-17 19:53+0300\n"
+"PO-Revision-Date: \n"
+"Last-Translator: Alex Lundin <aslundin@ya.ru>\n"
+"Language-Team: My Super Team\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;"
+"_nx_noop:1,2,3c;esc_attr__;esc_attr_e;esc_html__;esc_html_e\n"
+"X-Poedit-Basepath: ..\n"
+"X-Generator: Poedit 2.4.2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: node_modules\n"
+
+#: asl-redirect.php:107
+msgid "Настройки редиректа"
+msgstr "Настройки редиректа"
+
+#: asl-redirect.php:122
+msgid "Сохранить"
+msgstr "Сохранить"
+
+#: asl-redirect.php:132
+msgid "Параметры редиректа"
+msgstr "Параметры редиректа"
+
+#: asl-redirect.php:137
+msgid "Ссылка на который будет происходить редирект"
+msgstr "Ссылка на который будет происходить редирект"
+
+#: asl-redirect.php:140
+msgid "URL для редиректа"
+msgstr "URL для редиректа"
+
+#: asl-redirect.php:147
+msgid "Редирект всего сайта"
+msgstr "Редирект всего сайта"
+
+#: asl-redirect.php:148
+msgid "Редирект всего сайта кроме главной страницы"
+msgstr "Редирект всего сайта кроме главной страницы"
+
+#: asl-redirect.php:149
+msgid "Постраничный редирект"
+msgstr "Постраничный редирект"
+
+#: asl-redirect.php:152
+msgid "Варианты редиректа"
+msgstr "Варианты редиректа"
+
+#: plugin-update-checker-4.11/Puc/v4p11/Plugin/Ui.php:54
+msgid "View details"
+msgstr "Просмотреть детали"
+
+#: plugin-update-checker-4.11/Puc/v4p11/Plugin/Ui.php:77
+#, php-format
+msgid "More information about %s"
+msgstr "Больше информации о %s"
+
+#: plugin-update-checker-4.11/Puc/v4p11/Plugin/Ui.php:128
+msgid "Check for updates"
+msgstr "Проверить обновления"
+
+#: plugin-update-checker-4.11/Puc/v4p11/Plugin/Ui.php:214
+#, php-format
+msgctxt "the plugin title"
+msgid "The %s plugin is up to date."
+msgstr "%s плагин обновлен."
+
+#: plugin-update-checker-4.11/Puc/v4p11/Plugin/Ui.php:216
+#, php-format
+msgctxt "the plugin title"
+msgid "A new version of the %s plugin is available."
+msgstr "Доступна новая версия плагина %s."
+
+#: plugin-update-checker-4.11/Puc/v4p11/Plugin/Ui.php:218
+#, php-format
+msgctxt "the plugin title"
+msgid "Could not determine if updates are available for %s."
+msgstr "Не удалось определить, доступны ли обновления для %s."
+
+#: plugin-update-checker-4.11/Puc/v4p11/Plugin/Ui.php:224
+#, php-format
+msgid "Unknown update checker status \"%s\""
+msgstr "Неизвестный статус проверки обновлений \"%s\""
+
+#: plugin-update-checker-4.11/Puc/v4p11/Vcs/PluginUpdateChecker.php:98
+msgid "There is no changelog available."
+msgstr "Список изменений отсутствует."

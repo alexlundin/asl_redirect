@@ -2,11 +2,17 @@
 /**
  * Plugin Name: All Pages Redirect by Alex Lundin
  * Author:      Alex Lundin
- * Version:     1.0.122
+ * Version:     1.1
  * Description: All Pages Redirect by Alex Lundin
  * License:     GPL2
+ * Text Domain: asl-redirect
+ * Domain Path: /lang
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  */
+
+add_action( 'plugins_loaded', function(){
+	load_plugin_textdomain( 'asl-redirect', false, dirname( plugin_basename(__FILE__) ) . '/lang' );
+} );
 
 require 'plugin-update-checker-4.11/plugin-update-checker.php';
 $myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
@@ -43,58 +49,11 @@ function asl_redirect_deactivate() {
 	$wpdb->delete( $wpdb->postmeta, [ 'meta_key' => 'asl_redirect' ] );
 }
 
-
-add_action( 'admin_init', 'asl_redirect_init' );
-
-function asl_redirect_init() {
-	add_settings_section(
-		'asl_setting_sections',
-		'Настройки редиректа для всего сайта, кроме главной страницы',
-		'',
-		'reading'
-	);
-
-	add_settings_field(
-		'asl_settings_checkbox_name',
-		'Включить редирект?',
-		'asl_settings_callback_check',
-		'reading',
-		'asl_setting_sections'
-	);
-
-	add_settings_field(
-		'asl_setting_name2',
-		'URL (без https://)',
-		'asl_settings_callback_input',
-		'reading',
-		'asl_setting_sections'
-	);
-
-	register_setting( 'reading', 'asl_settings_checkbox_name' );
-	register_setting( 'reading', 'asl_setting_name2' );
-}
-
-function asl_settings_callback_check() {
-	echo '<input 
-		name="asl_settings_checkbox_name" 
-		type="checkbox" 
-		' . checked( 1, get_option( 'asl_settings_checkbox_name' ), false ) . ' 
-		value="1" 
-		class="code" 
-	/>';
-}
-
-function asl_settings_callback_input() {
-	echo '<input 
-		name="asl_setting_name2"  
-		type="text" 
-		value="' . get_option( 'asl_setting_name2' ) . '" 
-		class="code2"
-	 />';
-}
-
+/*
+ * Создание метабокса
+ */
 function asl_redirect_meta_boxes() {
-	add_meta_box( 'asl_redirect_box', 'Настройки редиректа', 'asl_redir_box', array(
+	add_meta_box( 'asl_redirect_box', __('Настройки редиректа', 'asl-redirect'), 'asl_redir_box', array(
 		'post',
 		'page'
 	), 'side', 'high' );
@@ -108,7 +67,9 @@ function asl_redir_box( $post ) {
 	$html = '<label><input type="checkbox" name="noindex"';
 	$html .= 'value="1"';
 	$html .= ( get_post_meta( $post->ID, 'asl_redirect', true ) == '1' ) ? ' checked="checked"' : '';
-	$html .= ' /> Включить редирект страницы?</label>';
+	$html .= ' />';
+	$html .= __('Включить редирект страницы?', 'asl-redirect');
+    $html .= '</label>';
 	echo $html;
 }
 
@@ -138,30 +99,141 @@ function asl_redirect_save_box_data( $post_id ) {
 
 add_action( 'save_post', 'asl_redirect_save_box_data' );
 
-if ( get_option( 'asl_settings_checkbox_name' ) == 1 ) {
-	add_action( 'template_redirect', function () {
-		global $post;
-		$post_id = $post->ID;
-		if ( ! is_front_page() ) {
-			$new = 'https://' . get_option( 'asl_setting_name2' ) . '/' . get_post( $post_id )->post_name;
+/*
+ * Создание страницы настроек
+ */
+$asl_page = 'asl-redirect-page.php';
 
-			wp_redirect( $new, 301 );
-			exit;
-		}
-	} );
+function asl_redirect_options() {
+	global $asl_page;
+	add_options_page( __( 'Настройки редиректа', 'asl-redirect' ), __( 'Настройки редиректа', 'asl-redirect' ), 'manage_options', $asl_page, 'asl_redirect_page' );
 }
 
-add_action( 'template_redirect', function () {
+add_action( 'admin_menu', 'asl_redirect_options' );
 
-	if ( get_post_meta( $post_id, 'asl_redirect', true ) == 1 ) {
-		$new = 'https://' . get_option( 'asl_setting_name2' ) . '/' . get_post( $post_id )->post_name;
-//		$new = str_replace( "//", "/", $new );
+function asl_redirect_page() {
+	global $asl_page;
+	?>
+    <div class="wrap">
+    <form method="post" enctype="multipart/form-data" action="options.php">
+		<?php
+		settings_fields( 'asl_redirect_options' ); // меняем под себя только здесь (название настроек)
+		do_settings_sections( $asl_page );
+		?>
+        <p class="submit">
+            <input type="submit" class="button-primary" value="<?php _e( 'Сохранить', 'asl-redirect' ) ?>"/>
+        </p>
+    </form>
+    </div><?php
+}
 
-		if ( is_page( $post_id ) ) {
-			wp_redirect( $new, 301 );
-			exit();
-		}
+function asl_redirect_settings() {
+	global $asl_page;
+	register_setting( 'asl_redirect_options', 'asl_redirect_options', 'asl_redirect_validate' );
+
+	add_settings_section( 'asl_redirect_section', __( 'Параметры редиректа', 'asl-redirect' ), '', $asl_page );
+
+	$asl_redirect_fields = array(
+		'type'      => 'text', // тип
+		'id'        => 'asl_redirect_uri',
+		'desc'      => __( 'Ссылка на который будет происходить редирект', 'asl-redirect' ),
+		'label_for' => 'asl_redirect_uri'
+	);
+	add_settings_field( 'asl_redirect_url', __( 'URL для редиректа', 'asl-redirect' ), 'asl_redirect_display_settings', $asl_page, 'asl_redirect_section', $asl_redirect_fields );
+
+
+	$asl_redirect_fields = array(
+		'type' => 'radio',
+		'id'   => 'asl_redirect_radio',
+		'vals' => array(
+			'all'         => __( 'Редирект всего сайта', 'asl-redirect' ),
+			'except_main' => __( 'Редирект всего сайта кроме главной страницы', 'asl-redirect' ),
+			'paginate'    => __( 'Постраничный редирект', 'asl-redirect' )
+		)
+	);
+	add_settings_field( 'asl_redirect_radio', __( 'Варианты редиректа', 'asl-redirect' ), 'asl_redirect_display_settings', $asl_page, 'asl_redirect_section', $asl_redirect_fields );
+
+}
+
+add_action( 'admin_init', 'asl_redirect_settings' );
+
+function asl_redirect_display_settings( $args ) {
+	extract( $args );
+
+	$option_name = 'asl_redirect_options';
+
+	$o = get_option( $option_name );
+
+	switch ( $type ) {
+		case 'text':
+			$o[ $id ] = esc_attr( stripslashes( $o[ $id ] ) );
+			echo "<input class='regular-text' type='text' id='$id' name='" . $option_name . "[$id]' value='$o[$id]' />";
+			echo ( $desc != '' ) ? "<br /><span class='description'>$desc</span>" : "";
+			break;
+		case 'radio':
+			echo "<fieldset>";
+			foreach ( $vals as $v => $l ) {
+				$checked = ( $o[ $id ] == $v ) ? "checked='checked'" : '';
+				echo "<label><input type='radio' name='" . $option_name . "[$id]' value='$v' $checked />$l</label><br />";
+			}
+			echo "</fieldset>";
+			break;
 	}
-} );
+}
 
-wp_reset_postdata(); // сброс
+function asl_redirect_validate( $input ) {
+	foreach ( $input as $k => $v ) {
+		$valid_input[ $k ] = trim( $v );
+
+		/* Вы можете включить в эту функцию различные проверки значений, например
+		if(! задаем условие ) { // если не выполняется
+			$valid_input[$k] = ''; // тогда присваиваем значению пустую строку
+		}
+		*/
+	}
+
+	return $valid_input;
+}
+
+global $post;
+
+$all_options   = get_option( 'asl_redirect_options' );
+$radio_options = $all_options['asl_redirect_radio'];
+
+$address = $all_options['asl_redirect_uri'];
+$address = ! strpos( $address, 'https://' ) || ! strpos( $address, 'http://' ) ? 'https://' . $address : $address;
+
+
+switch ( $radio_options ) {
+	case( 'all' ):
+		add_action( 'template_redirect', function () use ( $post, $address ) {
+			$paginate_address = substr( $address, - 1 ) === '/' ? $address . get_post( $post->ID )->post_name : $address . '/' . get_post( $post->ID )->post_name;
+			if ( ! is_front_page() ) {
+				wp_redirect( $paginate_address, 301 );
+			} else {
+				wp_redirect( $address, 301 );
+			}
+			exit;
+		} );
+		break;
+	case( 'except_main' ):
+		add_action( 'template_redirect', function () use ( $post, $address ) {
+			$paginate_address = substr( $address, - 1 ) === '/' ? $address . get_post( $post->ID )->post_name : $address . '/' . get_post( $post->ID )->post_name;
+			if ( ! is_front_page() ) {
+				wp_redirect( $paginate_address, 301 );
+				exit;
+			}
+		} );
+		break;
+	case( 'paginate' ):
+		add_action( 'template_redirect', function () use ( $address ) {
+			global $post;
+			$paginate_address = substr( $address, - 1 ) === '/' ? $address . get_post( $post->ID )->post_name : $address . '/' . get_post( $post->ID )->post_name;
+			if ( get_post_meta( $post->ID, 'asl_redirect', true ) == 1 ) {
+				wp_redirect( $paginate_address, 301 );
+				exit();
+			}
+		} );
+		break;
+}
+wp_reset_postdata();
