@@ -2,7 +2,7 @@
 /**
  * Plugin Name: All Pages Redirect by Alex Lundin
  * Author:      Alex Lundin
- * Version:     1.2.1
+ * Version:     1.2.11
  * Description: All Pages Redirect by Alex Lundin
  * License:     GPL2
  * Text Domain: asl-redirect
@@ -201,7 +201,7 @@ $all_options   = get_option( 'asl_redirect_options' );
 $radio_options = $all_options['asl_redirect_radio'];
 
 $address = $all_options['asl_redirect_uri'];
-$address = ! strpos( $address, 'https://' ) || ! strpos( $address, 'http://' ) ? 'https://' . $address : $address;
+$address = (strpos( $address, 'https://' ) || strpos( $address, 'http://' )) ?  $address : 'https://' . $address;
 
 
 switch ( $radio_options ) {
